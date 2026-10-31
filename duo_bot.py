@@ -31,6 +31,7 @@ NTFY_TOPIC = os.environ.get("NTFY_TOPIC", "").strip()
 PARTS = [p.strip() for p in os.environ.get("DUO_PART", "").split(",") if p.strip()]
 ZIP = os.environ.get("DUO_ZIP", "78758")
 STORE_KEYWORDS = ["domain", "barton"]
+NAMES = {"MK1F4LL/A": "256GB Night Sky", "MK1H4LL/A": "512GB Night Sky"}
 
 TZ = ZoneInfo("America/Chicago")
 DAY_START = dt.time(7, 0)            # start watching (Austin time)
@@ -79,7 +80,7 @@ def find_parts():
 
 
 def check():
-    params = {"pl": "true", "mts.0": "regular", "location": ZIP, "searchNearby": "true"}
+    params = {"fae": "true", "pl": "true", "mts.0": "regular", "location": ZIP, "searchNearby": "true"}
     for i, p in enumerate(PARTS):
         params[f"parts.{i}"] = p
     data = json.loads(get("https://www.apple.com/shop/fulfillment-messages?"
@@ -92,7 +93,7 @@ def check():
         for p in PARTS:
             info = s.get("partsAvailability", {}).get(p, {})
             if info.get("pickupDisplay") == "available":
-                hits.append(f"{name} ({p}): {info.get('pickupSearchQuote', 'Available')}")
+                hits.append(f"{name}: {NAMES.get(p, p)} - {info.get('pickupSearchQuote', 'Available')}")
     return hits
 
 
