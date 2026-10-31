@@ -1,0 +1,27 @@
+name: iPhone Duo pickup bot
+
+on:
+  schedule:
+    # Fires every hour; only one run at a time watches, and the next one
+    # waits in line, so coverage is continuous from 7 AM to 9:30 PM Austin time.
+    - cron: "5 * * * *"
+  workflow_dispatch: {}   # lets you run a test from the Actions tab
+
+concurrency:
+  group: duo-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Watch for pickup stock
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          DUO_PART: ${{ secrets.DUO_PART }}
+        run: python duo_bot.py
